@@ -59,12 +59,33 @@ SET_IP SetIP_Default={{192,168,1,1},
 											{192,168,1,100},
 											6000
 };
+
+typedef struct xxxxxxxb{
+	char Version ;  //   Version = 'L' 标压版 ， Version = 'H' 高压版   
+	char S;         //   多少S的电池
+	unsigned short Current;   //电流
+									//   涓流充电电压阈值
+									//   恒流充电电压阈值
+									//   平衡充电时间阈值
+									//   当前实时电压值
+}POWER_INPUT;
+
+
+typedef struct xxxxxxxxxxb{
+	char Version ;  //   Version = 'L' 标压版 ， Version = 'H' 高压版   
+	char S;         //   多少S的电池
+									//   放电电压阈值
+									//   当前实时电压值
+}POWER_OUTPUT;
+
+
 SET_IP SetIP_User = {0};
 //flash中 0~99半字 SetIP_Default   100~199半字 SetIP_User
 
 //要写入到STM32 FLASH的字符串数组
 
 char Command[30] = {0};
+
 //char Part[6][10] = {0};
 //char * p = NULL;
 //unsigned char j=0;
@@ -240,7 +261,7 @@ int main(void)
 	Load_Net_Parameters();		//装载网络参数	
 	W5500_Hardware_Reset();		//硬件复位W5500
 	W5500_Initialization();		//W5500初始货配置
-	Yoyung_GPIO_Init();				// GPIO/开关系统 初始化
+	//Yoyung_GPIO_Init();				// GPIO/开关系统 初始化
 	
 	//IP地址恢复默认
 	if ( 0 == GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_8) )   
@@ -266,66 +287,34 @@ int main(void)
 			//---- Add By Yoyung ---  应用协议
 			switch(Rx_Buffer[0])
 			{
-				case 1: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOA, GPIO_Pin_1);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOA, GPIO_Pin_1);  //关
-								break;
-				case 2: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOA, GPIO_Pin_2);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOA, GPIO_Pin_2);  //关
-								break;		
-				case 3: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOA, GPIO_Pin_3);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOA, GPIO_Pin_3);  //关
-								break;
-				case 4: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOA, GPIO_Pin_8);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOA, GPIO_Pin_8);  //关
-								break;		
-				case 5: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOA, GPIO_Pin_9);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOA, GPIO_Pin_9);  //关
-								break;
-				case 6: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOA, GPIO_Pin_10);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOA, GPIO_Pin_10);  //关
-								break;		
-				case 7: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOA, GPIO_Pin_11);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOA, GPIO_Pin_11);  //关
-								break;
-				case 8: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOA, GPIO_Pin_12);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOA, GPIO_Pin_12);  //关
-								break;
-				case 9: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOA, GPIO_Pin_15);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOA, GPIO_Pin_15);  //关
-								break;
-				case 10: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOB, GPIO_Pin_3);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOB, GPIO_Pin_3);  //关
-								break;							
-				case 11: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOB, GPIO_Pin_4);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOB, GPIO_Pin_4);  //关
-								break;								
-				case 12: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOB, GPIO_Pin_5);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOB, GPIO_Pin_5);  //关
-								break;							
-				case 13: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOB, GPIO_Pin_6);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOB, GPIO_Pin_6);  //关
-								break;								
-				case 14: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOB, GPIO_Pin_7);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOB, GPIO_Pin_7);  //关
-								break;					
-				case 15: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOB, GPIO_Pin_10);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOB, GPIO_Pin_10);  //关
-								break;					
-				case 16: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOB, GPIO_Pin_11);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOB, GPIO_Pin_11);  //关
-								break;					
-				case 17: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOB, GPIO_Pin_12);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOB, GPIO_Pin_12);  //关
-								break;					
-				case 18: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOB, GPIO_Pin_13);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOB, GPIO_Pin_13);  //关
-								break;					
-				case 19: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOB, GPIO_Pin_14);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOB, GPIO_Pin_14);  //关
-								break;					
-				case 20: if(Rx_Buffer[1]==1)  GPIO_ResetBits(GPIOB, GPIO_Pin_15);  //开
-								else if (Rx_Buffer[1]==2)  GPIO_SetBits(GPIOB, GPIO_Pin_15);  //关
-								break;	
+				case 'C':{
+									/***** 将字符串拆解成几个小字符串 ******/
+//									char Command[20] = "Set xxxxxxx";
+									char Part[6][10] = {0};
+									char * p = NULL;
+									unsigned char j=0;	
+									
+									p = strtok((char *)Rx_Buffer,":");
+									memcpy(Command,p,strlen(p)+1);
+									while( p != NULL ) 
+									{	
+										p = strtok(NULL, ".");
+										memcpy(Part[j],p,strlen(p)+1);
+										j++;
+									}
+									if (0 == strncmp(Command,"C Input",strlen(Command))  )
+									{
+										//充电
+										
+									}
+									else if(0 == strncmp(Command,"C Output",strlen(Command))  )
+									{
+										//放电
+										
+									}
+										
+									}
+									break;
 								
 				case 'S':{
 									/***** 将字符串拆解成几个小字符串 ******/
