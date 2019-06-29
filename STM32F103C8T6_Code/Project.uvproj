@@ -438,6 +438,11 @@
               <FileType>1</FileType>
               <FilePath>.\USER\stmflash.c</FilePath>
             </File>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\USER\adc.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

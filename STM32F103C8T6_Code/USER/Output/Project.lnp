@@ -3,6 +3,7 @@
 ".\user\output\stm32f10x_it.o"
 ".\user\output\w5500.o"
 ".\user\output\stmflash.o"
+".\user\output\adc.o"
 ".\user\output\misc.o"
 ".\user\output\stm32f10x_adc.o"
 ".\user\output\stm32f10x_bkp.o"

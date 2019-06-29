@@ -25,6 +25,7 @@
 #include "stm32f10x.h"		
 #include "W5500.h"			
 #include "stmflash.h"
+#include "adc.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -60,6 +61,12 @@ SET_IP SetIP_Default={{192,168,1,1},
 											6000
 };
 
+SET_IP SetIP_User = {0};
+//flash中 0~99半字 SetIP_Default   100~199半字 SetIP_User
+
+
+u16 adcx;
+
 typedef struct xxxxxxxb{
 	char Version ;  //   Version = 'L' 标压版 ， Version = 'H' 高压版   
 	char S;         //   多少S的电池
@@ -78,9 +85,6 @@ typedef struct xxxxxxxxxxb{
 									//   当前实时电压值
 }POWER_OUTPUT;
 
-
-SET_IP SetIP_User = {0};
-//flash中 0~99半字 SetIP_Default   100~199半字 SetIP_User
 
 //要写入到STM32 FLASH的字符串数组
 
@@ -261,7 +265,9 @@ int main(void)
 	Load_Net_Parameters();		//装载网络参数	
 	W5500_Hardware_Reset();		//硬件复位W5500
 	W5500_Initialization();		//W5500初始货配置
-	//Yoyung_GPIO_Init();				// GPIO/开关系统 初始化
+	Adc_Init();								//12位ADC
+	
+	Yoyung_GPIO_Init();				// GPIO/开关系统 初始化
 	
 	//IP地址恢复默认
 	if ( 0 == GPIO_ReadInputDataBit(GPIOB,GPIO_Pin_8) )   
@@ -275,6 +281,8 @@ int main(void)
 	
 	while (1)
 	{
+		adcx=Get_Adc_Average(ADC_Channel_1,10);
+		
 		W5500_Socket_Set();//W5500端口初始化配置
 
 		W5500_Interrupt_Process();//W5500中断处理程序框架
